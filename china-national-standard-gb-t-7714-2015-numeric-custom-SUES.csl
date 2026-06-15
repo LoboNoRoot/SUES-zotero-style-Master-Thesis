@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<style xmlns="http://purl.org/net/xbiblio/csl" version="1.0" class="in-text" name-as-sort-order="all" sort-separator=" " demote-non-dropping-particle="never" initialize-with=" " initialize-with-hyphen="false" page-range-format="expanded" default-locale="zh-CN">
+<style xmlns="http://purl.org/net/xbiblio/csl" version="1.0" class="in-text" name-as-sort-order="all" sort-separator=" " demote-non-dropping-particle="never" initialize-with=" " initialize-with-hyphen="false" page-range-format="minimal" default-locale="zh-CN">
   <info>
     <title>China National Standard GB/T 7714-2015 (numeric, 中文，SUES硕士毕业论文格式)</title>
     <id>http://www.zotero.org/styles/china-national-standard-gb-t-7714-2015-numeric</id>
@@ -35,7 +35,7 @@
       <term name="page-range-delimiter">-</term>
     </terms>
   </locale>
-  <locale>
+  <locale xml:lang="en">
     <date form="numeric">
       <date-part name="year" range-delimiter="/"/>
       <date-part name="month" form="numeric-leading-zeros" prefix="-" range-delimiter="/"/>
@@ -43,6 +43,7 @@
     </date>
     <terms>
       <term name="page-range-delimiter">-</term>
+      <term name="et-al">et al.</term>
     </terms>
   </locale>
 
@@ -122,6 +123,15 @@
         <text variable="medium"/>
       </if>
     </choose>
+  </macro>
+
+  <!-- 专著题名：题名:版本[M] -->
+  <macro name="title-book">
+    <group delimiter=": ">
+      <text variable="title"/>
+      <text macro="edition"/>
+    </group>
+    <text value="[M]"/>
   </macro>
 
   <!-- 题名（含文献类型标识） -->
@@ -231,6 +241,22 @@
     <date variable="issued" form="numeric"/>
   </macro>
 
+  <!-- 学位论文出版项：出版地:出版者,出版年:起止页码 -->
+  <macro name="publisher-thesis">
+    <group delimiter=", ">
+      <group delimiter=": ">
+        <text variable="publisher-place"/>
+        <text variable="publisher"/>
+      </group>
+      <text macro="issued-year"/>
+    </group>
+    <choose>
+      <if variable="page">
+        <text variable="page" prefix=": "/>
+      </if>
+    </choose>
+  </macro>
+
   <!-- 出版项：出版地:出版者,出版年:起止页码 -->
   <macro name="publisher">
     <choose>
@@ -249,6 +275,12 @@
             <text macro="issued-year"/>
           </group>
           <text variable="page"/>
+        </group>
+      </else-if>
+      <else-if type="legislation bill hearing regulation treaty" match="any">
+        <group delimiter=". ">
+          <text variable="publisher"/>
+          <text macro="issued-date"/>
         </group>
       </else-if>
       <else-if type="book chapter paper-conference periodical thesis" variable="archive archive-place publisher publisher-place page" match="any">
@@ -319,9 +351,9 @@
         </group>
       </if>
       <else-if variable="container-title">
-        <group delimiter=": ">
+        <!-- <group delimiter=": "> -->
           <text variable="container-title"/>
-        </group>
+        <!-- </group> -->
       </else-if>
     </choose>
   </macro>
@@ -386,7 +418,7 @@
       <!-- （3）论文集：主编.论文集名[C].出版地:出版者,出版年:起止页码 -->
       <else-if type="paper-conference">
         <group delimiter=".">
-          <text macro="author"/>
+          <text macro="container-contributors"/>
           <text macro="title"/>
           <text macro="publisher"/>
         </group>
@@ -416,6 +448,14 @@
         <group delimiter=".">
           <text macro="author"/>
           <text macro="title"/>
+          <text macro="publisher-thesis"/>
+        </group>
+      </else-if>
+
+      <!-- 政府公文 -->
+      <else-if type="legislation bill hearing regulation treaty" match="any">
+        <group delimiter=".">
+          <text macro="title"/>
           <text macro="publisher"/>
         </group>
       </else-if>
@@ -438,10 +478,7 @@
       <else>
         <group delimiter=".">
           <text macro="author"/>
-          <group delimiter=":">
-            <text macro="title"/>
-            <text macro="edition"/>
-          </group>
+          <text macro="title-book"/>
           <text macro="secondary-contributors"/>
           <text macro="publisher"/>
         </group>
@@ -461,7 +498,7 @@
   </citation>
 
   <!-- 参考文献表 -->
-  <bibliography entry-spacing="0" et-al-min="4" et-al-use-first="3" second-field-align="flush">
+  <bibliography entry-spacing="0" et-al-min="4" et-al-use-first="3" second-field-align="flush" hanging-indent="false">
     <layout suffix="." locale="en">
       <text variable="citation-number" prefix="[" suffix="]"/>
       <text macro="entry-layout"/>
