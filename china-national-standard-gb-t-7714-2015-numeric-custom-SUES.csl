@@ -22,8 +22,8 @@
   <locale xml:lang="zh">
     <date form="text">
       <date-part name="year" suffix="年" range-delimiter="&#8212;"/>
-      <date-part name="month" form="numeric" suffix="月" range-delimiter="&#8212;"/>
-      <date-part name="day" suffix="日" range-delimiter="&#8212;"/>
+      <!-- <date-part name="month" form="numeric" suffix="月" range-delimiter="&#8212;"/> -->
+      <!-- <date-part name="day" suffix="日" range-delimiter="&#8212;"/> -->
     </date>
     <terms>
       <term name="edition" form="short">版</term>
@@ -38,8 +38,8 @@
   <locale xml:lang="en">
     <date form="numeric">
       <date-part name="year" range-delimiter="/"/>
-      <date-part name="month" form="numeric-leading-zeros" prefix="-" range-delimiter="/"/>
-      <date-part name="day" form="numeric-leading-zeros" prefix="-" range-delimiter="/"/>
+      <!-- <date-part name="month" form="numeric-leading-zeros" prefix="-" range-delimiter="/"/> -->
+      <!-- <date-part name="day" form="numeric-leading-zeros" prefix="-" range-delimiter="/"/> -->
     </date>
     <terms>
       <term name="page-range-delimiter">-</term>
@@ -218,21 +218,23 @@
   <macro name="issued-year">
     <choose>
       <if variable="issued">
-        <choose>
-          <if is-uncertain-date="issued">
-            <date variable="issued" form="numeric" date-parts="year" prefix="[" suffix="]"/>
-          </if>
-          <else>
-            <date variable="issued" form="numeric" date-parts="year"/>
-          </else>
-        </choose>
+        <date variable="issued" form="numeric" date-parts="year"/>
       </if>
       <else-if type="article-journal" variable="available-date" match="all">
         <date variable="available-date" form="numeric" date-parts="year"/>
       </else-if>
       <else>
-        <date variable="accessed" form="numeric" date-parts="year" prefix="[" suffix="]"/>
+        <date variable="accessed" form="numeric" date-parts="year"/>
       </else>
+    </choose>
+  </macro>
+
+  <!-- 学位论文出版年（仅用已发布的issued，不用accessed） -->
+  <macro name="issued-year-thesis">
+    <choose>
+      <if variable="issued">
+        <date variable="issued" form="numeric" date-parts="year"/>
+      </if>
     </choose>
   </macro>
 
@@ -243,13 +245,27 @@
 
   <!-- 学位论文出版项：出版地:出版者,出版年:起止页码 -->
   <macro name="publisher-thesis">
-    <group delimiter=", ">
-      <group delimiter=": ">
-        <text variable="publisher-place"/>
-        <text variable="publisher"/>
-      </group>
-      <text macro="issued-year"/>
-    </group>
+    <choose>
+      <if variable="publisher publisher-place">
+        <group delimiter=", ">
+          <group delimiter=": ">
+            <choose>
+              <if variable="publisher-place">
+                <text variable="publisher-place"/>
+                <text variable="publisher"/>
+              </if>
+              <else>
+                <text variable="publisher"/>
+              </else>
+            </choose>
+          </group>
+          <text macro="issued-year-thesis"/>
+        </group>
+      </if>
+      <else>
+        <text macro="issued-year-thesis"/>
+      </else>
+    </choose>
     <choose>
       <if variable="page">
         <text variable="page" prefix=": "/>
@@ -305,7 +321,7 @@
         </group>
       </else-if>
       <else-if variable="URL DOI" match="any">
-        <text macro="issued-date" prefix="(" suffix=")"/>
+        <text macro="issued-date"/>
       </else-if>
       <else>
         <text macro="issued-year"/>
@@ -419,7 +435,20 @@
       <else-if type="paper-conference">
         <group delimiter=".">
           <text macro="container-contributors"/>
-          <text macro="title"/>
+          <group delimiter="">
+            <choose>
+              <if variable="container-title">
+                <text variable="container-title"/>
+              </if>
+              <else-if variable="event-title">
+                <text variable="event-title"/>
+              </else-if>
+              <else>
+                <text variable="title"/>
+              </else>
+            </choose>
+            <text value="[C]"/>
+          </group>
           <text macro="publisher"/>
         </group>
       </else-if>
@@ -449,6 +478,10 @@
           <text macro="author"/>
           <text macro="title"/>
           <text macro="publisher-thesis"/>
+        <group delimiter=": ">
+          <text macro="publisher-place"/>
+        </group>
+          <text variable="page"/>
         </group>
       </else-if>
 

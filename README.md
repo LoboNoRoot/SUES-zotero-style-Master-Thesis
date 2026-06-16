@@ -57,10 +57,43 @@ https://zotero-chinese.com/styles/%E4%B8%8A%E6%B5%B7%E5%B7%A5%E7%A8%8B%E6%8A%80%
 
 
 ## 常见问题 ##
-- 为什么英文文献还是出现 "等" 而不是 "et al" ?
-> zotero上看这个文献的语言language设置，把语言改成"en"。
-> + 需要大批量修改语言?
+
+### 为什么英文文献还是出现 "等" 而不是 "et al" ? ###
+
+ zotero上看这个文献的语言language设置，把语言改成"en"。
+
+* 需要大批量修改语言?
+
+    > 可以通过JavaScript批量修改文献的语言字段
+
+    1. 在文献库中选中要修改语言的条目
+
+    2. Tools工具 → Developer开发者 → Run JavaScript
+
+    3. 贴入如下代码并运行
+        ```
+        var zoteroPane = Zotero.getActiveZoteroPane();
+        var items = zoteroPane.getSelectedItems();
+        var lan="en"; // 设置目标语言
+        var rn=0;
+        for (item of items) {
+            var la = item.getField("language");
+            if (la=="") { // 如果原语言为空则替换
+                item.setField("language", lan);
+                rn+=1;
+                await item.saveTx();
+            }
+        }
+        return rn+"个条目语言被替换为"+lan+"。";
+        ```
+        JavaScript代码来自知乎：https://zhuanlan.zhihu.com/p/341989158
+
     
+### 如果其他类似性质的文献正常添加，唯独部分无法正常添加的话
+可能是文献抓取时信息缺失导致。
+
+建议**谷歌**搜索，尽可能找到**文章正经自己发布的网站**或者是**出版商网站**进行抓取。如果实在是不幸还有信息缺失的话，只能手动填写 ↓
+![alt text](16be43b819e99bed3c08acd23e353df6.jpg)
 
 
 ## 需要注意的问题!! ##
@@ -70,4 +103,4 @@ https://zotero-chinese.com/styles/%E4%B8%8A%E6%B5%B7%E5%B7%A5%E7%A8%8B%E6%8A%80%
 
 
 
-*另外，这个csl没有大量测试过！测试完成时会删去这句话*
+*另外，这个csl没有大量测试过！同学引用文献后请注意检查！！测试完成时会删去这句话*
