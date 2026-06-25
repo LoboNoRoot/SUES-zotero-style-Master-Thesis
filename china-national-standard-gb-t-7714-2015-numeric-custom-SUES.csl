@@ -344,7 +344,7 @@
         <!-- 期刊：刊名,出版年份,卷(期):起止页码 -->
         <group delimiter=": ">
           <group>
-            <group delimiter=",">
+            <group delimiter=", ">
               <text variable="container-title"/>
               <text macro="issued-year"/>
               <text variable="volume"/>
@@ -388,7 +388,7 @@
 
       <!-- （1）期刊：作者.题名[J].刊名,出版年份,卷(期):起止页码 -->
       <if type="article-journal article-magazine" match="any">
-        <group delimiter=".">
+        <group delimiter=". ">
           <text macro="author"/>
           <text macro="title"/>
           <text macro="container-periodical"/>
@@ -397,7 +397,7 @@
 
       <!-- 报纸 -->
       <else-if type="article-newspaper">
-        <group delimiter=".">
+        <group delimiter=". ">
           <text macro="author"/>
           <text macro="title"/>
           <text macro="container-periodical"/>
@@ -406,7 +406,7 @@
 
       <!-- （5）专利：申请者.题名:专利号[P].公告日期 -->
       <else-if type="patent">
-        <group delimiter=".">
+        <group delimiter=". ">
           <text macro="author"/>
           <text macro="title-patent"/>
           <text macro="publisher"/>
@@ -433,7 +433,7 @@
 
       <!-- （3）论文集：主编.论文集名[C].出版地:出版者,出版年:起止页码 -->
       <else-if type="paper-conference">
-        <group delimiter=".">
+        <group delimiter=". ">
           <text macro="container-contributors"/>
           <group delimiter="">
             <choose>
